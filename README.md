@@ -1,4 +1,4 @@
-# JottoWorol Build Number Sync
+# Build Number Sync UPM package
 
 A small Unity package that keeps your project's build number in sync with an external API and exposes a runtime-friendly build number asset.
 
