@@ -1,9 +1,23 @@
-## Build Number Sync
+# JottoWorol Build Number Sync
 
 A small Unity package that keeps your project's build number in sync with an external API and exposes a runtime-friendly build number asset.
 
 ## Overview
 - The package provides an editor-side workflow to obtain and assign build numbers from a configurable API during build time, and a runtime provider to read the assigned build number.
+
+## User guide
+
+### Installation Options
+
+- Add to your `manifest.json`:
+    ```
+    "com.jottoworol.build-number-sync": "https://github.com/JottoWorol/build-number-sync.git#v0.1.0?path=/Packages/com.jottoworol.build-number-sync"
+    ```
+
+- Add package from Git URL via Unity Package Manager:
+    ```
+    https://github.com/JottoWorol/build-number-sync.git#v0.1.0?path=/Packages/com.jottoworol.build-number-sync
+    ```
 
 ### Usage
 
