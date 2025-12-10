@@ -1,0 +1,18 @@
+{
+  "name": "com.jottoworol.build-number-sync",
+  "version": "0.1.0",
+  "displayName": "Build Number Sync",
+  "description": "This is an example package",
+  "unity": "6000.2",
+  "unityRelease": "14f1",
+  "documentationUrl": "https://example.com/",
+  "dependencies": {
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0"
+  },
+  "author": {
+    "name": "Matityahu Keselman",
+    "email": "matikeselman@gmail.com",
+    "url": "https://github.com/JottoWorol"
+  }
+}
