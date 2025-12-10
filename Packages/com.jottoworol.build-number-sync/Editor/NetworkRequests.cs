@@ -93,7 +93,7 @@ namespace JottoWorol.BuildNumberSync.Editor
 
             if (result != UnityWebRequest.Result.Success)
             {
-                throw new InvalidOperationException($"Server returned {responseCode}. Error: {error}. Body: {content}");
+                throw new InvalidOperationException($"Server returned {responseCode}. Error: {error}. Url: {url}");
             }
 
             if (string.IsNullOrWhiteSpace(content))

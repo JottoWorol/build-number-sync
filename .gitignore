@@ -33,6 +33,7 @@ ExportedObj/
 *.svd
 *.opendb
 *.VC.db
+.utmp/
 
 # ============ Unity generated files ============
 [Ll]ibrary/
@@ -43,6 +44,7 @@ ExportedObj/
 [Ll]ogs/
 [Mm]emoryCaptures/
 sysinfo/
+build_BackUpThisFolder_ButDontShipItWithYourGame/
 
 # Crashlytics/Unity-generated crash settings
 crashlytics-build.properties
