@@ -11,12 +11,12 @@ A small Unity package that keeps your project's build number in sync with an ext
 
 - Add to your `manifest.json`:
     ```
-    "com.jottoworol.build-number-sync": "https://github.com/JottoWorol/build-number-sync.git#v0.1.0?path=/Packages/com.jottoworol.build-number-sync"
+    "com.jottoworol.build-number-sync": "https://github.com/JottoWorol/build-number-sync.git?path=/Packages/com.jottoworol.build-number-sync"
     ```
 
 - Add package from Git URL via Unity Package Manager:
     ```
-    https://github.com/JottoWorol/build-number-sync.git#v0.1.0?path=/Packages/com.jottoworol.build-number-sync
+    https://github.com/JottoWorol/build-number-sync.git?path=/Packages/com.jottoworol.build-number-sync
     ```
 
 ### Usage
