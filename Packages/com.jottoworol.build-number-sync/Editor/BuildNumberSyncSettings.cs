@@ -26,7 +26,7 @@ namespace JottoWorol.BuildNumberSync.Editor
         /// <summary>
         /// Creates a new settings asset at the default location and returns it.
         /// </summary>
-        public static BuildNumberSyncSettings CreateSettingsAsset()
+        private static BuildNumberSyncSettings CreateSettingsAsset()
         {
             // Ensure directory exists
             var directoryPath = System.IO.Path.GetDirectoryName(SETTINGS_ASSET_PATH);

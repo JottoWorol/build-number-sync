@@ -14,8 +14,6 @@ namespace JottoWorol.BuildNumberSync.Editor
         private const string DEFAULT_API_BASE_URL = "https://build-number-sync.jottoworol.top";
         private const string LEGACY_API_BASE_URL_KEY = "JottoWorol.BuildNumberSync.ApiBaseUrl";
 
-        private static string cachedApiBaseUrl;
-
         /// <summary>
         /// Gets the current API base URL according to the priority:
         /// 1. Settings asset (if exists)
@@ -24,31 +22,26 @@ namespace JottoWorol.BuildNumberSync.Editor
         /// </summary>
         public static string GetApiBaseUrl()
         {
-            if (!string.IsNullOrEmpty(cachedApiBaseUrl))
-            {
-                return cachedApiBaseUrl;
-            }
-
             if (TryGetSettings(out var settings) && !string.IsNullOrEmpty(settings.ApiBaseUrl))
             {
-                cachedApiBaseUrl = settings.ApiBaseUrl;
-                return cachedApiBaseUrl;
+                return settings.ApiBaseUrl;
             }
 
             if (TryGetLegacyApiBaseUrl(out var editorPrefsUrl))
             {
                 if (!string.IsNullOrWhiteSpace(editorPrefsUrl))
                 {
-                    cachedApiBaseUrl = editorPrefsUrl;
-                    return cachedApiBaseUrl;
+                    return editorPrefsUrl;
                 }
             }
 
             Debug.LogWarning($"{Logging.TAG} No API base url provided, using default API base url.");
-            cachedApiBaseUrl = DEFAULT_API_BASE_URL;
-            return cachedApiBaseUrl;
+            return DEFAULT_API_BASE_URL;
         }
         
+        /// <summary>
+        /// Attempts to get settings from the settings asset and cleans up legacy EditorPrefs if settings exist.
+        /// </summary>
         private static bool TryGetSettings(out BuildNumberSyncSettings settings)
         {
             settings = BuildNumberSyncSettings.GetOrLoadSettings();
@@ -61,6 +54,9 @@ namespace JottoWorol.BuildNumberSync.Editor
             return settings != null;
         }
         
+        /// <summary>
+        /// Attempts to get the API base URL from legacy EditorPrefs for backwards compatibility.
+        /// </summary>
         private static bool TryGetLegacyApiBaseUrl(out string apiBaseUrl)
         {
             if (EditorPrefs.HasKey(LEGACY_API_BASE_URL_KEY))
@@ -72,7 +68,10 @@ namespace JottoWorol.BuildNumberSync.Editor
             apiBaseUrl = null;
             return false;
         }
-        
+
+        /// <summary>
+        /// Cleans up legacy EditorPrefs when settings asset is found to avoid using outdated configuration.
+        /// </summary>
         private static void CleanupLegacyEditorPrefs()
         {
             if (EditorPrefs.HasKey(LEGACY_API_BASE_URL_KEY))

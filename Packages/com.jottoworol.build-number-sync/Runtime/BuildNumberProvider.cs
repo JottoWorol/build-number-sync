@@ -1,6 +1,6 @@
 namespace JottoWorol.BuildNumberSync.Runtime
 {
-    public class BuildNumberProvider
+    public static class BuildNumberProvider
     {
         /// <summary>
         /// Tries to get the current build number from the asset managed by BuildNumberAssetIO.
