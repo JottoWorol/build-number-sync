@@ -13,8 +13,6 @@ namespace JottoWorol.BuildNumberSync.Editor
 
     internal class NetworkRequests
     {
-        public const string DEFAULT_API_BASE_URL = "https://build-number-sync.jottoworol.top";
-        private const string BASE_URL_KEY = "JottoWorol.BuildNumberSync.NetworkRequests.BaseUrl";
         private const string GET_BUILD_NUMBER_ENDPOINT = "getNextBuildNumber?bundleId={0}&platform={1}";
         private const string SET_BUILD_NUMBER_ENDPOINT = "setBuildNumber?bundleId={0}&platform={1}&buildNumber={2}";
         private const string EXPECTED_FORMAT = "JSON must contain an integer `buildNumber` field (e.g. { \"buildNumber\": 123 }).";
@@ -23,14 +21,7 @@ namespace JottoWorol.BuildNumberSync.Editor
 
         public NetworkRequests()
         {
-            if (BaseApiUrlUpdater.TryGetUpdatedApiBaseUrl(out baseUrl))
-            {
-                EditorPrefs.SetString(BASE_URL_KEY, baseUrl);
-            }
-            else
-            {
-                baseUrl = EditorPrefs.GetString(BASE_URL_KEY, DEFAULT_API_BASE_URL);
-            }
+            baseUrl = BuildNumberSyncSettingsProvider.GetApiBaseUrl();
         }
 
         /// <summary>
@@ -51,7 +42,7 @@ namespace JottoWorol.BuildNumberSync.Editor
             }
             catch (Exception ex)
             {
-                Debug.LogError($"TryGetNextBuildNumber error: {ex}");
+                Debug.LogError($"{Logging.TAG} TryGetNextBuildNumber error: {ex}");
                 return false;
             }
         }
@@ -74,7 +65,7 @@ namespace JottoWorol.BuildNumberSync.Editor
             }
             catch (Exception ex)
             {
-                Debug.LogError($"TrySetBuildNumber error: {ex}");
+                Debug.LogError($"{Logging.TAG} TrySetBuildNumber error: {ex}");
                 return false;
             }
         }

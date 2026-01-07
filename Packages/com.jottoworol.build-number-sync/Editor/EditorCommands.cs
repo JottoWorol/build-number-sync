@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace JottoWorol.BuildNumberSync.Editor
 {
-    public static class EditorTool
+    public static class EditorCommands
     {
         /// <summary>
         /// Pulls the next build number from the server and assigns it to PlayerSettings.
@@ -19,11 +19,11 @@ namespace JottoWorol.BuildNumberSync.Editor
                 var currentBuildTarget = EditorUserBuildSettings.activeBuildTarget;
                 if (!BuildNumberHelper.TryAssignBuildNumber(currentBuildTarget, buildNumber, out var errorMessage))
                 {
-                    Debug.LogError($"Failed to assign build number: {errorMessage}");
+                    Debug.LogError($"{Logging.TAG} Failed to assign build number: {errorMessage}");
                 }
                 else
                 {
-                    Debug.Log($"Assigned build number {buildNumber} to PlayerSettings for {platform}.");
+                    Debug.Log($"{Logging.TAG} Assigned build number {buildNumber} to PlayerSettings for {platform}.");
                 }
             }
         }
@@ -45,19 +45,19 @@ namespace JottoWorol.BuildNumberSync.Editor
             
             if (!result)
             {
-                Debug.Log("Aborted pushing build number to server.");
+                Debug.Log($"{Logging.TAG} Aborted pushing build number to server.");
                 return;
             }
             
-            Debug.Log($"Pushing current build number {buildNumber} for platform '{platform}' to server...");
+            Debug.Log($"{Logging.TAG} Pushing current build number {buildNumber} for platform '{platform}' to server...");
             
             if (networkRequests.TrySetBuildNumber(bundleId, platform, buildNumber))
             {
-                Debug.Log($"Successfully set build number {buildNumber} for '{platform}'.");
+                Debug.Log($"{Logging.TAG} Successfully set build number {buildNumber} for '{platform}'.");
             }
             else
             {
-                Debug.LogError($"Failed to set build number {buildNumber} for '{platform}'.");
+                Debug.LogError($"{Logging.TAG} Failed to set build number {buildNumber} for '{platform}'.");
             }
         }
     }

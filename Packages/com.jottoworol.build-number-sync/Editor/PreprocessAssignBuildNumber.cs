@@ -44,7 +44,7 @@ namespace JottoWorol.BuildNumberSync.Editor
             // store build number in asset for runtime access
             BuildNumberAssetIO.Write(buildNumber);
 
-            Debug.Log($"Assigned build number {buildNumber} for bundle id {bundleId} (target: {report.summary.platform}).");
+            Debug.Log($"{Logging.TAG} Assigned build number {buildNumber} for bundle id {bundleId} (target: {report.summary.platform}).");
         }
 
         /// <summary>
