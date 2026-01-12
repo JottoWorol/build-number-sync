@@ -1,10 +1,11 @@
 # Build Number Sync UPM package
 
-A small Unity package that keeps your project's build number in sync with an external API and exposes a runtime-friendly build number asset.
+A Unity package that automatically increments build numbers for each build by syncing with an external API.
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Supported Platforms](#supported-platforms)
 - [User guide](#user-guide)
   - [Installation Options](#installation-options)
   - [Usage](#usage)
@@ -15,7 +16,26 @@ A small Unity package that keeps your project's build number in sync with an ext
   - [What's Included](#whats-included)
 
 ## Overview
-- The package provides an editor-side workflow to obtain and assign build numbers from a configurable API during build time, and a runtime provider to read the assigned build number.
+
+The package automatically increments your project's build number during the build process by fetching the next number from a configured API endpoint.
+
+**Key Features:**
+- Automatic build number increment during builds
+- Support for iOS, Android, WebGL, and desktop platforms
+- Shared build number sequence across team members via API
+- Runtime API for accessing the current build number
+
+## Supported Platforms
+
+The package automatically manages build numbers for:
+
+- **iOS** - Updates `PlayerSettings.iOS.buildNumber`
+- **Android** - Updates `PlayerSettings.Android.bundleVersionCode`
+- **WebGL** - Updates the build portion of `PlayerSettings.bundleVersion`
+- **Windows, macOS, Linux** - Updates `PlayerSettings.macOS.buildNumber`
+- **tvOS** - Updates `PlayerSettings.tvOS.buildNumber`
+- **WSA/UWP** - Updates `PlayerSettings.WSA.packageVersion`
+- **PS4** - Updates `PlayerSettings.PS4.appVersion`
 
 ## User guide
 
@@ -35,16 +55,16 @@ A small Unity package that keeps your project's build number in sync with an ext
 
 1) **Configure the API base URL**
    - Open **Tools → Build Number Sync → Create Settings Asset** to create a settings asset at `Assets/BuildNumberSyncSettings.asset`
-   - Select the asset and set the **Api Base Url** field to your API endpoint
-   - Leave it blank to use the default API URL
+   - Set the **Api Base Url** field to your API endpoint
+   - Leave blank to use the default API URL
 
 2) **Build your project**
-   - Build the player using Unity's normal build process
-   - During the build, the package will automatically contact the configured API and obtain a build number
-   - The build number will be assigned to `PlayerSettings.iOS.buildNumber` or `PlayerSettings.Android.bundleVersionCode` depending on your target platform
+   - Build the player using Unity's build process
+   - The package fetches the next build number from the API during the build
+   - The build number is assigned to the appropriate PlayerSettings field based on your target platform
 
-3) **Read the build number at runtime**
-   - At runtime, use the provided API to read the assigned build number:
+3) **Read the build number at runtime** (Optional)
+   - Access the build number from your code:
 
     ```csharp
     using JottoWorol.BuildNumberSync.Runtime;
@@ -56,10 +76,6 @@ A small Unity package that keeps your project's build number in sync with an ext
             if (BuildNumberProvider.TryGetCurrentBuildNumber(out var buildNumber))
             {
                 Debug.Log($"Build number: {buildNumber}");
-            }
-            else
-            {
-                Debug.Log("Build number not found.");
             }
         }
     }
@@ -80,7 +96,7 @@ The package expects a backend API that implements specific endpoints for managin
 
 **Default API:** `https://build-number-sync.jottoworol.top`
 
-> **Note:** The default API is deployed on Cloudflare's edge network. Users in regions where Cloudflare services are restricted may experience connectivity issues. In such cases, consider deploying your own API instance using one of the available platforms below.
+> **Note:** The default API is deployed on Cloudflare's edge network. Users in regions where Cloudflare services are restricted may experience connectivity issues. In such cases, deploy your own API instance using one of the available platforms below. Each platform provides a public API URL that you can use directly - no custom domain required.
 
 **API Documentation:** See [API.md](API.md) for the complete API contract and endpoint specifications.
 
@@ -88,26 +104,25 @@ The package expects a backend API that implements specific endpoints for managin
 
 ## Deploying Your Own API
 
-The `DeployProjects/` directory contains ready-to-deploy API implementations for multiple cloud platforms. Each project implements the required API contract and includes detailed deployment instructions.
+The `DeployProjects/` directory contains API implementations for multiple cloud platforms.
 
 ### Available Platforms
 
-- **[Cloudflare Workers](DeployProjects/cloudflare-worker-openapi/README.md)** - Edge computing platform with generous free tier (100K requests/day)
-- **[Google Cloud Run](DeployProjects/google-cloud-run-function/README.md)** - Serverless containers with automatic Firestore integration (2M requests/month free)
-- **[Yandex Cloud Functions](DeployProjects/yandex-cloud-function-nodejs/README.md)** - Serverless functions with YDB database (1M invocations/month free)
+- **[Cloudflare Workers](DeployProjects/cloudflare-worker-openapi/README.md)** - Edge computing platform (100K requests/day free tier)
+- **[Google Cloud Run](DeployProjects/google-cloud-run-function/README.md)** - Serverless containers with Firestore (2M requests/month free tier)
+- **[Yandex Cloud Functions](DeployProjects/yandex-cloud-function-nodejs/README.md)** - Serverless functions with YDB (1M invocations/month free tier)
 
-### What's Included?
+### What's Included
 
 Each deployment project contains:
-- Complete, working API implementation
-- Step-by-step deployment instructions (both CLI and manual/GUI)
-- Platform-specific database/storage setup
-- Cost information and pricing links
-- No deep platform knowledge required - just follow the instructions
+- API implementation
+- Deployment instructions (CLI and GUI)
+- Database/storage setup
+- Pricing information
 
-**Platform Recommendations:**
-- **Cloudflare** - Best option if available in your region (no billing account or payment method required)
-- **Google Cloud** - Fast setup with high global availability (requires billing account, but stays within free tier)
-- **Yandex Cloud** - Alternative if other services are restricted or if you already have an account there
+**Platform Notes:**
+- **Cloudflare** - No billing account required
+- **Google Cloud** - Requires billing account
+- **Yandex Cloud** - Alternative option
 
-Simply choose your preferred platform, follow the deployment guide, and configure the Unity package to use your API URL.
+Choose a platform, follow the deployment instructions, and configure the Unity package with your API URL.

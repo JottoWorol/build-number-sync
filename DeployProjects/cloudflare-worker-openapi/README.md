@@ -150,7 +150,28 @@ Published build-number-sync (X.XX sec)
   https://build-number-sync.YOUR_SUBDOMAIN.workers.dev
 ```
 
-Copy the worker URL - this is your API endpoint.
+**Copy the worker URL** - this is your **API base URL** to use in the Unity package settings.
+
+---
+
+### Getting Your API Base URL
+
+After deployment, your API base URL is the worker URL shown in the deployment output.
+
+**To retrieve it later:**
+
+```bash
+npx wrangler deployments list
+```
+
+Or find it in the [Cloudflare Dashboard](https://dash.cloudflare.com/) under **Workers & Pages** → **build-number-sync** → **Settings** → **Domains & Routes**.
+
+**Example API base URL:**
+```
+https://build-number-sync.YOUR_SUBDOMAIN.workers.dev
+```
+
+Use this URL in your Unity package's **BuildNumberSyncSettings** asset (**Api Base Url** field).
 
 ---
 

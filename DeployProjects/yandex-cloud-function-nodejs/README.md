@@ -281,14 +281,16 @@ yc serverless api-gateway create \
 yc serverless api-gateway get build-number-sync-api --folder-id YOUR_FOLDER_ID
 ```
 
-Look for the `domain` field. This is your API endpoint.
+Look for the `domain` field in the output.
 
 **Example output:**
 ```
 domain: d5dxxxxx.apigw.yandexcloud.net
 ```
 
-Your API is now accessible at: `https://d5dxxxxx.apigw.yandexcloud.net`
+**Your API base URL is:** `https://d5dxxxxx.apigw.yandexcloud.net`
+
+Use this URL in your Unity package's **BuildNumberSyncSettings** asset (**Api Base Url** field).
 
 ---
 
@@ -400,7 +402,7 @@ Your API is now accessible at: `https://d5dxxxxx.apigw.yandexcloud.net`
 6. Wait for deployment to complete (~30 seconds)
 7. Copy the **Service domain** URL (e.g., `https://d5dxxxxx.apigw.yandexcloud.net`)
 
-Your API is now accessible at the copied domain URL.
+**This is your API base URL** to use in the Unity package's **BuildNumberSyncSettings** asset (**Api Base Url** field).
 
 ---
 

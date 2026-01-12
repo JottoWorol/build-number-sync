@@ -137,7 +137,7 @@ gcloud run deploy build-number-sync \
 
 ---
 
-### Step 5: Get Service URL
+### Step 5: Get Your API Base URL
 
 **Retrieve the deployed service URL:**
 
@@ -152,7 +152,9 @@ gcloud run services describe build-number-sync \
 https://build-number-sync-xxxxxxxxxx-uc.a.run.app
 ```
 
-Your API is now accessible at this URL.
+**This is your API base URL** to use in the Unity package settings.
+
+Use this URL in your Unity package's **BuildNumberSyncSettings** asset (**Api Base Url** field).
 
 ---
 
@@ -246,7 +248,9 @@ Your API is now accessible at this URL.
 
 **Note:** Cloud Build will treat the inline code just like repository content, automatically building and deploying your service. You only need to provide the two files - `index.js` and `package.json`.
 
-Your API is now accessible at the displayed URL.
+**Get Your API Base URL:**
+
+Once deployment is complete, copy the service URL from the service details page. This is your **API base URL** to use in the Unity package's **BuildNumberSyncSettings** asset (**Api Base Url** field).
 
 ---
 
