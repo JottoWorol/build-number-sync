@@ -1,0 +1,18 @@
+{
+  "name": "com.jottoworol.build-number-sync",
+  "version": "0.3.0",
+  "displayName": "Build Number Sync",
+  "description": "The package provides an editor-side workflow to obtain and assign build numbers from a configurable API during build time, and a runtime provider to read the assigned build number.",
+  "unity": "6000.2",
+  "unityRelease": "14f1",
+  "documentationUrl": "https://github.com/JottoWorol/build-number-sync",
+  "dependencies": {
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0"
+  },
+  "author": {
+    "name": "Matityahu Keselman",
+    "email": "matikeselman@gmail.com",
+    "url": "https://github.com/JottoWorol"
+  }
+}

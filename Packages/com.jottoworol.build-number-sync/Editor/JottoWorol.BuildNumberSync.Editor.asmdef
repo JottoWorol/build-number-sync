@@ -1,0 +1,18 @@
+{
+    "name": "JottoWorol.BuildNumberSync.Editor",
+    "rootNamespace": "JottoWorol.BuildNumberSync.Editor",
+    "references": [
+        "GUID:c4ae0dee5c01412eb8ae69cdc4a89d26"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

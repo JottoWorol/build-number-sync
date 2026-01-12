@@ -1,0 +1,24 @@
+{
+  "name": "build-number-sync-yandex",
+  "version": "1.0.0",
+  "description": "Build Number Sync API for Yandex Cloud Functions using YDB",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@ydbjs/core": "^6.0.0",
+    "@ydbjs/query": "^6.0.0",
+    "@ydbjs/auth": "^6.0.0",
+    "@ydbjs/value": "^6.0.0",
+    "@ydbjs/error": "^6.0.0",
+    "@ydbjs/retry": "^6.0.0"
+  },
+  "engines": {
+    "node": "22"
+  }
+}

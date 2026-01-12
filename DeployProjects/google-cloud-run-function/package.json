@@ -1,0 +1,19 @@
+{
+  "name": "build-number-sync",
+  "version": "1.0.1",
+  "description": "Build Number Sync API for Google Cloud Run using Firestore",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "24"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "@google-cloud/firestore": "^8.0.0",
+    "@google-cloud/functions-framework": "^3.0.0",
+    "express": "^4.21.2"
+  }
+}

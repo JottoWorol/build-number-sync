@@ -1,0 +1,110 @@
+openapi: 3.0.0
+info:
+  title: Build Number Sync API
+  version: 1.0.0
+  description: Build number synchronization service using YDB
+
+paths:
+  /:
+    get:
+      summary: API information
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: YOUR_FUNCTION_ID_HERE
+        service_account_id: YOUR_SERVICE_ACCOUNT_ID_HERE
+      parameters: []
+      responses:
+        '200':
+          description: API info
+
+  /getNextBuildNumber:
+    get:
+      summary: Get and increment build number
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: YOUR_FUNCTION_ID_HERE
+        service_account_id: YOUR_SERVICE_ACCOUNT_ID_HERE
+      parameters:
+        - name: bundleId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Application bundle identifier
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+            default: default
+          description: Platform (ios, android, default)
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  buildNumber:
+                    type: integer
+        '400':
+          description: Bad request
+
+  /setBuildNumber:
+    post:
+      summary: Set build number to specific value
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: YOUR_FUNCTION_ID_HERE
+        service_account_id: YOUR_SERVICE_ACCOUNT_ID_HERE
+      parameters:
+        - name: bundleId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: buildNumber
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+            default: default
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+
+  /deleteBundleId:
+    delete:
+      summary: Delete bundle ID entry
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: YOUR_FUNCTION_ID_HERE
+        service_account_id: YOUR_SERVICE_ACCOUNT_ID_HERE
+      parameters:
+        - name: bundleId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+            default: default
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not found
+
