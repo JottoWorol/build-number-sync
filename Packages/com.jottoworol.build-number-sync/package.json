@@ -1,6 +1,6 @@
 {
   "name": "com.jottoworol.build-number-sync",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "displayName": "Build Number Sync",
   "description": "The package provides an editor-side workflow to obtain and assign build numbers from a configurable API during build time, and a runtime provider to read the assigned build number.",
   "unity": "6000.2",

@@ -17,13 +17,14 @@ A Unity package that automatically increments build numbers for each build by sy
 
 ## Overview
 
-The package automatically increments your project's build number during the build process by fetching the next number from a configured API endpoint.
+The package automatically increments your project's build number during the build process by fetching the next number from a configured API endpoint or storing it locally.
 
 **Key Features:**
 - Automatic build number increment during builds
 - Support for iOS, Android, WebGL, and desktop platforms
-- Shared build number sequence across team members via API
-- Runtime API for accessing the current build number
+- **Remote mode:** Fresh build number fetched via API
+- **Local mode:** Increments build number locally (for solo developers, no remote connection required)
+- Runtime access to the current build number
 
 ## Supported Platforms
 
@@ -43,18 +44,32 @@ The package automatically manages build numbers for:
 
 - Add to your `manifest.json`:
     ```
-    "com.jottoworol.build-number-sync": "https://github.com/JottoWorol/build-number-sync.git?path=/Packages/com.jottoworol.build-number-sync"
+    "com.jottoworol.build-number-sync": "https://github.com/JottoWorol/build-number-sync.git?path=/Packages/com.jottoworol.build-number-sync#0.3.1"
     ```
 
 - Add package from Git URL via Unity Package Manager:
     ```
-    https://github.com/JottoWorol/build-number-sync.git?path=/Packages/com.jottoworol.build-number-sync
+    https://github.com/JottoWorol/build-number-sync.git?path=/Packages/com.jottoworol.build-number-sync#0.3.1
     ```
 
 ### Usage
 
+#### Option 1: Local Storage Mode (Solo Development)
+
+1) **Configure local storage mode**
+   - Open **Tools → Build Number Sync → Create Settings Asset** to create a settings asset
+   - Enable the **"Use Local Only"** checkbox
+   - Build numbers will be stored locally in PlayerSettings (not synced with remote API)
+
+2) **Build your project**
+   - Build the player using Unity's build process
+   - Build numbers increment automatically on your machine
+
+#### Option 2: Remote Storage Mode (API sync)
+
 1) **Configure the API base URL**
    - Open **Tools → Build Number Sync → Create Settings Asset** to create a settings asset at `Assets/BuildNumberSyncSettings.asset`
+   - Keep **"Use Local Only"** unchecked (default)
    - Set the **Api Base Url** field to your API endpoint
    - Leave blank to use the default API URL
 
@@ -63,7 +78,10 @@ The package automatically manages build numbers for:
    - The package fetches the next build number from the API during the build
    - The build number is assigned to the appropriate PlayerSettings field based on your target platform
 
+#### Runtime Access
+
 3) **Read the build number at runtime** (Optional)
+   - Applicable for both local and remote modes
    - Access the build number from your code:
 
     ```csharp
@@ -87,8 +105,9 @@ The package provides additional menu commands under **Tools → Build Number Syn
 
 - **Create Settings Asset** - Creates the settings asset if it doesn't exist
 - **Open Settings** - Opens the settings asset in the Inspector
-- **Pull & Assign New Build Number (Manual)** - Manually fetches and assigns a new build number without building
-- **Push Current Build Number to Server** - Uploads your current build number to the server (useful for syncing after manual changes)
+- **Pull Next from Remote** - Manually fetches and assigns a new build number from remote API without building (remote storage only)
+- **Push Current to Remote** - Uploads your current build number to the remote server (remote storage only)
+- **Delete Remote Data** - Deletes build number data from the remote server (remote storage only)
 
 ## API
 
