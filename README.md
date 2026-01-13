@@ -72,6 +72,8 @@ The package automatically manages build numbers for:
    - Keep **"Use Local Only"** unchecked (default)
    - Set the **Api Base Url** field to your API endpoint
    - Leave blank to use the default API URL
+   
+   > **⚠️ Note:** The default public API is for testing only and not recommended for production use due to privacy concerns. For production, deploy your own API instance (see [Deploying Your Own API](#deploying-your-own-api)).
 
 2) **Build your project**
    - Build the player using Unity's build process

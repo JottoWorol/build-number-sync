@@ -8,6 +8,8 @@ Automatically syncs build numbers across your team using a cloud API.
 2. Build your project - build numbers sync automatically
 3. Read at runtime:
 
+> **⚠️ Note:** The default public API is for testing only and not recommended for production use due to privacy concerns. For production, deploy your own API instance (see documentation below).
+
 ```csharp
 using JottoWorol.BuildNumberSync.Runtime;
 
