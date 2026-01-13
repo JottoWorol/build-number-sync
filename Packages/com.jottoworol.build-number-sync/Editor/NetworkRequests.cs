@@ -92,7 +92,7 @@ namespace JottoWorol.BuildNumberSync.Editor
             }
         }
         
-        public bool TryPingAPI()
+        public bool TryPingRemote()
         {
             if (string.IsNullOrWhiteSpace(baseUrl)) return false;
 
@@ -102,7 +102,7 @@ namespace JottoWorol.BuildNumberSync.Editor
 
             if (result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"{Logging.TAG} PingAPI error: Server returned {responseCode}. Error: {error}. Url: {url}");
+                Debug.LogError($"{Logging.TAG} TryPingRemote error: Server returned {responseCode}. Error: {error}. Url: {url}");
                 return false;
             }
 

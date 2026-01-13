@@ -7,8 +7,8 @@ using UnityEngine;
 namespace JottoWorol.BuildNumberSync.Editor
 {
     /// <summary>
-    /// Preprocess build step that fetches the next build number from the network and assigns
-    /// it to the appropriate PlayerSettings for the current build target.
+    /// Preprocess build step that fetches the next build number based on configured storage mode
+    /// and assigns it to the appropriate PlayerSettings for the current build target.
     /// </summary>
     internal class PreprocessAssignBuildNumber : IPreprocessBuildWithReport
     {
@@ -16,53 +16,77 @@ namespace JottoWorol.BuildNumberSync.Editor
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            var isCi = BuildEnvironment.IsCi();
             var bundleId = PlayerSettings.applicationIdentifier;
-            var platform = report.summary.platform.ToString();
+            var buildTarget = report.summary.platform;
 
             if (string.IsNullOrWhiteSpace(bundleId))
             {
-                HandleFailure(isCi,
-                    $"PlayerSettings.applicationIdentifier is not set for target {report.summary.platform}. Cannot fetch build number without a valid bundle id.");
+                HandleFailure($"PlayerSettings.applicationIdentifier is not set for target {buildTarget}. Cannot fetch build number without a valid bundle id.");
             }
 
-            var network = new NetworkRequests();
+            // Determine which provider to use based on storage mode configuration
+            var useLocalProvider = BuildNumberSyncSettingsProvider.GetUseLocalProvider();
+            var useLocalAsFallback = BuildNumberSyncSettingsProvider.GetUseLocalAsFallback();
+            IBuildNumberProvider provider;
+            string providerName;
 
-            // fetch next build number from server
-            if (!network.TryGetNextBuildNumber(bundleId, platform, out var buildNumber))
+            if (useLocalProvider)
             {
-                HandleFailure(isCi, $"Failed to obtain next build number for bundle id '{bundleId}'");
+                provider = new LocalBuildNumberProvider();
+                providerName = "local";
+            }
+            else
+            {
+                provider = new RemoteBuildNumberProvider();
+                providerName = "remote";
+            }
+
+            // Try to get next build number from the primary provider
+            if (!provider.TryGetNext(bundleId, buildTarget, out var buildNumber))
+            {
+                // If remote storage mode failed and fallback is enabled, use local storage
+                if (!useLocalProvider && useLocalAsFallback)
+                {
+                    Debug.LogWarning($"{Logging.TAG} Failed to obtain build number from remote storage. Falling back to local storage.");
+                    provider = new LocalBuildNumberProvider();
+                    providerName = "local (fallback)";
+                    
+                    if (!provider.TryGetNext(bundleId, buildTarget, out buildNumber))
+                    {
+                        HandleFailure($"Failed to obtain next build number for bundle id '{bundleId}' from both remote and local storage.");
+                    }
+                }
+                else
+                {
+                    HandleFailure($"Failed to obtain next build number for bundle id '{bundleId}' from {providerName} storage.");
+                }
             }
 
             // assign build number to PlayerSettings according to target platform
-            if (!BuildNumberHelper.TryAssignBuildNumber(report.summary.platform, buildNumber, out var errorMessage))
+            if (!BuildNumberHelper.TryAssignBuildNumber(buildTarget, buildNumber, out var errorMessage))
             {
-                HandleFailure(isCi,
-                    $"Failed to assign build number {buildNumber} for bundle id '{bundleId}': {errorMessage}");
+                HandleFailure($"Failed to assign build number {buildNumber} for bundle id '{bundleId}': {errorMessage}");
             }
             
             // store build number in asset for runtime access
             BuildNumberAssetIO.Write(buildNumber);
 
-            Debug.Log($"{Logging.TAG} Assigned build number {buildNumber} for bundle id {bundleId} (target: {report.summary.platform}).");
+            Debug.Log($"{Logging.TAG} Assigned build number {buildNumber} for bundle id {bundleId} (target: {buildTarget}, provider: {providerName}).");
         }
 
         /// <summary>
         /// Unified failure handling
         /// </summary>
-        /// <param name="isCi">If true, avoid any user interaction and just throw exceptions on failure.</param>
         /// <param name="errorMessage"></param>
         /// <exception cref="BuildFailedException"></exception>
-        private static void HandleFailure(bool isCi, string errorMessage)
+        private static void HandleFailure(string errorMessage)
         {
-            var useCurrent = false;
-
-            if (isCi)
+            if (BuildEnvironment.IsCi())
             {
                 throw new BuildFailedException(errorMessage);
             }
 
-            useCurrent = EditorUtility.DisplayDialog(
+            var useCurrent = EditorUtility.DisplayDialog(
                 "Build number sync error",
                 $"{errorMessage}\nYou can keep the current PlayerSettings and continue the build, or abort the build.",
                 "Use current settings and continue",

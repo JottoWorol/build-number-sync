@@ -14,8 +14,28 @@ namespace JottoWorol.BuildNumberSync.Editor
         private const string SETTINGS_ASSET_GUID_KEY = "BuildNumberSyncSettingsAssetGuid";
 
         [SerializeField]
+        [Tooltip("Storage mode selection: Local storage keeps build numbers on your machine. Remote storage synchronizes via API and shares across team members.")]
+        private bool useLocalOnly;
+
+        [SerializeField]
+        [Tooltip("If remote storage is unavailable during build preprocess, automatically fallback to local storage instead of failing the build.")]
+        private bool useLocalAsFallback = true;
+
+        [SerializeField]
         [Tooltip("The base URL used for the build number API. Leave blank to use the default URL.")]
         private string apiBaseUrl = string.Empty;
+
+        public bool UseLocalOnly
+        {
+            get => useLocalOnly;
+            set => useLocalOnly = value;
+        }
+
+        public bool UseLocalAsFallback
+        {
+            get => useLocalAsFallback;
+            set => useLocalAsFallback = value;
+        }
 
         public string ApiBaseUrl
         {

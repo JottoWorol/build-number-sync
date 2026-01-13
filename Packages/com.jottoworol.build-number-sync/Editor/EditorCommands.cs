@@ -6,77 +6,86 @@ namespace JottoWorol.BuildNumberSync.Editor
     public static class EditorCommands
     {
         /// <summary>
-        /// Pulls the next build number from the server and assigns it to PlayerSettings.
+        /// Pulls the next build number from the remote API and assigns it to PlayerSettings.
+        /// Note: This always uses remote storage, regardless of the configured storage mode.
         /// </summary>
-        [MenuItem("Tools/Build Number Sync/Pull & Assign Build Number")]
-        public static void AssignBuildNumber()
+        [MenuItem("Tools/Build Number Sync/Pull Next from Remote")]
+        public static void PullNextFromRemote()
         {
-            var networkRequests = new NetworkRequests();
-            var platform = EditorUserBuildSettings.activeBuildTarget.ToString();
+            var buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            var bundleId = PlayerSettings.applicationIdentifier;
             
-            if (networkRequests.TryGetNextBuildNumber(PlayerSettings.applicationIdentifier, platform, out var buildNumber))
+            var provider = new RemoteBuildNumberProvider();
+
+            if (!provider.TryGetNext(bundleId, buildTarget, out var buildNumber))
             {
-                var currentBuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                if (!BuildNumberHelper.TryAssignBuildNumber(currentBuildTarget, buildNumber, out var errorMessage))
-                {
-                    Debug.LogError($"{Logging.TAG} Failed to assign build number: {errorMessage}");
-                }
-                else
-                {
-                    Debug.Log($"{Logging.TAG} Assigned build number {buildNumber} to PlayerSettings for {platform}.");
-                }
+                Debug.LogError($"{Logging.TAG} Failed to obtain build number from remote API.");
+                return;
+            }
+
+            if (!BuildNumberHelper.TryAssignBuildNumber(buildTarget, buildNumber, out var errorMessage))
+            {
+                Debug.LogError($"{Logging.TAG} Failed to assign build number: {errorMessage}");
+            }
+            else
+            {
+                Debug.Log($"{Logging.TAG} Assigned build number {buildNumber} to PlayerSettings for {buildTarget}.");
             }
         }
 
         /// <summary>
-        /// Pushes the current build number from PlayerSettings to the server, overwriting the server value.
+        /// Pushes the current build number from PlayerSettings to the remote API.
+        /// Note: This always uses remote storage, regardless of the configured storage mode.
         /// </summary>
-        [MenuItem("Tools/Build Number Sync/Push Build Number to Server")]
-        public static void SetCurrentVersionOnServer()
+        [MenuItem("Tools/Build Number Sync/Push Current to Remote")]
+        public static void PushCurrentToRemote()
         {
-            var networkRequests = new NetworkRequests();
             var bundleId = PlayerSettings.applicationIdentifier;
-            var platform = EditorUserBuildSettings.activeBuildTarget.ToString();
-            var buildNumber = BuildNumberHelper.GetCurrentBuildNumber(EditorUserBuildSettings.activeBuildTarget);
+            var buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            var buildNumber = BuildNumberHelper.GetCurrentBuildNumber(buildTarget);
+            
+            var provider = new RemoteBuildNumberProvider();
             
             var result = EditorUtility.DisplayDialog("Push Build Number",
-                $"Are you sure you want to push the current build number {buildNumber} for platform '{platform}' to the server?",
+                $"Are you sure you want to push the current build number {buildNumber} for platform '{buildTarget}' to remote API?",
                 "Yes", "No");
             
             if (!result)
             {
-                Debug.Log($"{Logging.TAG} Aborted pushing build number to server.");
+                Debug.Log($"{Logging.TAG} Aborted pushing build number to remote API.");
                 return;
             }
             
-            Debug.Log($"{Logging.TAG} Pushing current build number {buildNumber} for platform '{platform}' to server...");
+            Debug.Log($"{Logging.TAG} Pushing current build number {buildNumber} for platform '{buildTarget}' to remote API...");
             
-            if (networkRequests.TrySetBuildNumber(bundleId, platform, buildNumber))
+            if (provider.SetRemoteBuildNumber(bundleId, buildTarget, buildNumber))
             {
-                Debug.Log($"{Logging.TAG} Successfully set build number {buildNumber} for '{platform}'.");
+                Debug.Log($"{Logging.TAG} Successfully set build number {buildNumber} for '{buildTarget}' on remote API.");
             }
             else
             {
-                Debug.LogError($"{Logging.TAG} Failed to set build number {buildNumber} for '{platform}'.");
+                Debug.LogError($"{Logging.TAG} Failed to set build number {buildNumber} for '{buildTarget}' on remote API.");
             }
         }
 
         /// <summary>
-        /// Deletes the build number data for the current bundle ID and platform from the server.
+        /// Deletes the build number data for the current bundle ID and platform from the remote API.
         /// WARNING: This action cannot be undone. The next build will start from build number 1.
+        /// Note: This always uses remote storage, regardless of the configured storage mode.
         /// </summary>
-        [MenuItem("Tools/Build Number Sync/Delete data from Server")]
-        public static void DeleteBundleIdFromServer()
+        [MenuItem("Tools/Build Number Sync/Delete Remote Data")]
+        public static void DeleteRemoteData()
         {
-            var networkRequests = new NetworkRequests();
             var bundleId = PlayerSettings.applicationIdentifier;
-            var platform = EditorUserBuildSettings.activeBuildTarget.ToString();
+            var buildTarget = EditorUserBuildSettings.activeBuildTarget;
+            
+            var provider = new RemoteBuildNumberProvider();
             
             var result = EditorUtility.DisplayDialog(
                 "Delete Build Number Data",
-                $"WARNING: This will permanently delete the build number data from the server for:\n\n" +
+                $"WARNING: This will permanently delete the build number data from remote API for:\n\n" +
                 $"Bundle ID: {bundleId}\n" +
-                $"Platform: {platform}\n\n" +
+                $"Platform: {buildTarget}\n\n" +
                 $"This action cannot be undone.\n" +
                 $"The next build will start from build number 1.\n\n" +
                 $"Are you sure you want to continue?",
@@ -85,15 +94,15 @@ namespace JottoWorol.BuildNumberSync.Editor
             
             if (!result)
             {
-                Debug.Log($"{Logging.TAG} Aborted deleting bundle data from server.");
+                Debug.Log($"{Logging.TAG} Aborted deleting bundle data from remote API.");
                 return;
             }
             
-            Debug.Log($"{Logging.TAG} Deleting build number data for '{bundleId}' platform '{platform}' from server...");
+            Debug.Log($"{Logging.TAG} Deleting build number data for '{bundleId}' platform '{buildTarget}' from remote API...");
             
-            if (networkRequests.TryDeleteBundleId(bundleId, platform))
+            if (provider.DeleteRemoteBuildNumber(bundleId, buildTarget))
             {
-                Debug.Log($"{Logging.TAG} Successfully deleted build number data for '{bundleId}' platform '{platform}'.");
+                Debug.Log($"{Logging.TAG} Successfully deleted build number data for '{bundleId}' platform '{buildTarget}' from remote API.");
             }
             else
             {

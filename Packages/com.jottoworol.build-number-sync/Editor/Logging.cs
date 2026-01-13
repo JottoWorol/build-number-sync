@@ -1,7 +1,7 @@
 namespace JottoWorol.BuildNumberSync.Editor
 {
-    public class Logging
+    internal static class Logging
     {
-        public const string TAG = "[BuildNumberSync]";
+        internal const string TAG = "[BuildNumberSync]";
     }
 }

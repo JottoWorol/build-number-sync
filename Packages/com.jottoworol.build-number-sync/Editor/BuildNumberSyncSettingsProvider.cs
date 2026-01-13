@@ -1,24 +1,18 @@
 using UnityEditor;
-using UnityEngine;
 
 namespace JottoWorol.BuildNumberSync.Editor
 {
     /// <summary>
-    /// Provides access to Build Number Sync API base URL with the following priority:
+    /// Provides access to Build Number Sync settings with the following priority:
     /// 1. Settings asset (if exists)
-    /// 2. EditorPrefs (for backwards compatibility with key JottoWorol.BuildNumberSync.ApiBaseUrl)
-    /// 3. Default URL constant
+    /// 2. Default values
     /// </summary>
     internal static class BuildNumberSyncSettingsProvider
     {
         private const string DEFAULT_API_BASE_URL = "https://build-number-sync.jottoworol.top";
-        private const string LEGACY_API_BASE_URL_KEY = "JottoWorol.BuildNumberSync.ApiBaseUrl";
 
         /// <summary>
-        /// Gets the current API base URL according to the priority:
-        /// 1. Settings asset (if exists)
-        /// 2. EditorPrefs (for backwards compatibility)
-        /// 3. Default URL constant
+        /// Gets the current API base URL from settings asset, or returns the default URL.
         /// </summary>
         public static string GetApiBaseUrl()
         {
@@ -27,56 +21,44 @@ namespace JottoWorol.BuildNumberSync.Editor
                 return settings.ApiBaseUrl;
             }
 
-            if (TryGetLegacyApiBaseUrl(out var editorPrefsUrl))
-            {
-                if (!string.IsNullOrWhiteSpace(editorPrefsUrl))
-                {
-                    return editorPrefsUrl;
-                }
-            }
-
             return DEFAULT_API_BASE_URL;
         }
-        
+
         /// <summary>
-        /// Attempts to get settings from the settings asset and cleans up legacy EditorPrefs if settings exist.
+        /// Gets whether to use local storage mode instead of remote storage.
+        /// Returns false if no settings asset exists (defaults to remote storage mode).
         /// </summary>
-        private static bool TryGetSettings(out BuildNumberSyncSettings settings)
+        public static bool GetUseLocalProvider()
         {
-            settings = BuildNumberSyncSettings.GetOrLoadSettings();
-            
-            if (settings != null)
+            if (TryGetSettings(out var settings))
             {
-                CleanupLegacyEditorPrefs();
-            }
-            
-            return settings != null;
-        }
-        
-        /// <summary>
-        /// Attempts to get the API base URL from legacy EditorPrefs for backwards compatibility.
-        /// </summary>
-        private static bool TryGetLegacyApiBaseUrl(out string apiBaseUrl)
-        {
-            if (EditorPrefs.HasKey(LEGACY_API_BASE_URL_KEY))
-            {
-                apiBaseUrl = EditorPrefs.GetString(LEGACY_API_BASE_URL_KEY, DEFAULT_API_BASE_URL);
-                return true;
+                return settings.UseLocalOnly;
             }
 
-            apiBaseUrl = null;
             return false;
         }
 
         /// <summary>
-        /// Cleans up legacy EditorPrefs when settings asset is found to avoid using outdated configuration.
+        /// Gets whether to use local storage as fallback when remote storage mode fails during build preprocess.
+        /// Returns true if no settings asset exists (defaults to fallback enabled).
         /// </summary>
-        private static void CleanupLegacyEditorPrefs()
+        public static bool GetUseLocalAsFallback()
         {
-            if (EditorPrefs.HasKey(LEGACY_API_BASE_URL_KEY))
+            if (TryGetSettings(out var settings))
             {
-                EditorPrefs.DeleteKey(LEGACY_API_BASE_URL_KEY);
+                return settings.UseLocalAsFallback;
             }
+
+            return true;
+        }
+        
+        /// <summary>
+        /// Attempts to get settings from the settings asset.
+        /// </summary>
+        private static bool TryGetSettings(out BuildNumberSyncSettings settings)
+        {
+            settings = BuildNumberSyncSettings.GetOrLoadSettings();
+            return settings != null;
         }
     }
 }
